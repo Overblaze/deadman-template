@@ -1,0 +1,30 @@
+name: deadman-notify
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Test run (emails only the owner, not the contact)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send notification
+        run: python3 notify.py
+        env:
+          TEST: ${{ inputs.test }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          OWNER_NAME: ${{ secrets.OWNER_NAME }}
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
+          CONTACT_EMAILS: ${{ secrets.CONTACT_EMAILS }}
